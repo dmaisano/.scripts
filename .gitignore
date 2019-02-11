@@ -1,0 +1,36 @@
+# ignore executables
+# *
+# !*.*
+# !*/
+
+# secret
+config.*
+config/*
+!config/*.md
+db.json
+
+# Numerous always-ignore extensions
+*.vi
+*.exe
+test*.sh
+*.sass-cache
+node_modules/
+.tmp/
+build
+dist/
+
+# OS or Editor folders
+.DS_Store
+.cache
+.vscode
+
+# Personal Ignore Extensions
+*.zip
+test.*
+tempCodeRunnerFile.*
+*.txt
+*.log
+*.*-log
+yarn.lock
+shrinkwrap.yaml
+package-lock.json
