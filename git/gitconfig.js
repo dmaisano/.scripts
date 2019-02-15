@@ -1,15 +1,10 @@
 #!/usr/bin/env node
 
 const { prompt } = require('enquirer');
-const low = require('lowdb');
-const FileSync = require('lowdb/adapters/FileSync');
-const adapter = new FileSync('db.json');
+const { defaults, addEmail, removeEmail } = require('./utils');
 
-const db = low(adapter);
-
-db.defaults({ user: {}, emails: [] }).write();
-
-async function userConfig() {
+async function gitConfig() {
+  defaults();
   let flag;
 
   if (process.argv.length < 3) {
@@ -25,20 +20,26 @@ async function userConfig() {
     flag = { flag };
   }
 
-  const action = await prompt({
+  const response = await prompt({
     type: 'select',
     name: 'action',
     message: 'select action to perform',
-    choices: ['select email', 'change username'],
+    choices: ['select email', 'add email', 'remove email', 'change username'],
     // "email address updated! ✉️"
   });
 
-  switch (action) {
+  switch (response.action) {
     case 'select email':
+      break;
+    case 'add email':
+      addEmail();
+      break;
+    case 'remove email':
+      removeEmail();
       break;
     case 'change username':
       break;
   }
 }
 
-userConfig();
+gitConfig();
