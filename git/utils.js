@@ -24,11 +24,9 @@ const addEmail = async (message = 'enter a new email') => {
     message,
   });
 
-  let email = response.email;
-
-  while (!validEmail.test(email)) {
+  if (!validEmail.test(response.email)) {
     console.log('invalid email entered');
-    email = await addEmail(scope, message);
+    await addEmail();
     return;
   }
 
@@ -49,13 +47,9 @@ const removeEmail = async () => {
 const changeEmail = async (scope = '--local') => {
   const emails = db.get('emails').value();
 
-  let email = '';
-
   if (emails.length === 0) {
     console.log('no emails added');
-    email = await addEmail();
-    email = email.email;
-
+    await addEmail();
     return;
   }
 
@@ -65,6 +59,8 @@ const changeEmail = async (scope = '--local') => {
     message: 'select an email',
     choices: emails,
   });
+
+  const email = response.selectedEmail;
 
   const { spawn } = require('child_process');
   const gitEmail = spawn('git', ['config', scope, 'user.email', email]);

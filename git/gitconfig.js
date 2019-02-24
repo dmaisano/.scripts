@@ -3,11 +3,10 @@
 const { prompt } = require('enquirer');
 const { defaults, addEmail, changeEmail, removeEmail } = require('./utils');
 
-async function gitConfig() {
+async function gitConfig(scope = '') {
   defaults();
-  let scope;
 
-  if (process.argv.length < 3) {
+  if (scope === '' && process.argv.length < 3) {
     const response = await prompt({
       type: 'select',
       name: 'scope',
@@ -30,20 +29,26 @@ async function gitConfig() {
       'add email',
       'remove email',
       'change username',
+      'exit',
     ],
   });
 
   switch (response.action) {
     case 'change user email':
-      changeEmail(scope);
+      await changeEmail(scope);
+      await gitConfig();
       break;
     case 'add email':
-      addEmail();
+      await addEmail();
+      await gitConfig();
       break;
     case 'remove email':
-      removeEmail();
+      await removeEmail();
+      await gitConfig();
       break;
     case 'change username':
+      break;
+    default:
       break;
   }
 }
