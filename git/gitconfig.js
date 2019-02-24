@@ -1,35 +1,41 @@
 #!/usr/bin/env node
 
 const { prompt } = require('enquirer');
-const { defaults, addEmail, removeEmail } = require('./utils');
+const { defaults, addEmail, changeEmail, removeEmail } = require('./utils');
 
 async function gitConfig() {
   defaults();
-  let flag;
+  let scope;
 
   if (process.argv.length < 3) {
-    flag = await prompt({
+    const response = await prompt({
       type: 'select',
-      name: 'flag',
-      message: 'select config scope',
+      name: 'scope',
+      message: 'select git config scope',
       choices: ['global', 'local'],
     });
+
+    scope = `--${response.scope}`;
   } else {
-    flag = process.argv[2];
-    flag = flag.startsWith('--') ? flag.slice(2, flag.length) : flag;
-    flag = { flag };
+    scope = process.argv[2];
+    scope = scope.startsWith('--') ? scope : `--${scope}`;
   }
 
   const response = await prompt({
     type: 'select',
     name: 'action',
     message: 'select action to perform',
-    choices: ['select email', 'add email', 'remove email', 'change username'],
-    // "email address updated! ✉️"
+    choices: [
+      'change user email',
+      'add email',
+      'remove email',
+      'change username',
+    ],
   });
 
   switch (response.action) {
-    case 'select email':
+    case 'change user email':
+      changeEmail(scope);
       break;
     case 'add email':
       addEmail();
@@ -41,5 +47,10 @@ async function gitConfig() {
       break;
   }
 }
+
+// suppress 'UnhandledPromiseRejectionWarning'
+process.on('unhandledRejection', () => {
+  process.exit(1);
+});
 
 gitConfig();
