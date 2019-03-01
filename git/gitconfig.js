@@ -36,16 +36,13 @@ async function gitConfig(scope = '') {
   switch (response.action) {
     case 'change user email':
       await changeEmail(scope);
-      await gitConfig();
-      break;
+      return gitConfig();
     case 'add email':
       await addEmail();
-      await gitConfig();
-      break;
+      return gitConfig();
     case 'remove email':
       await removeEmail();
-      await gitConfig();
-      break;
+      return gitConfig();
     case 'change username':
       break;
     default:

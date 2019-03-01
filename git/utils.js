@@ -26,8 +26,7 @@ const addEmail = async (message = 'enter a new email') => {
 
   if (!validEmail.test(response.email)) {
     console.log('invalid email entered');
-    await addEmail();
-    return;
+    return await addEmail();
   }
 
   db.get('emails')
@@ -44,13 +43,13 @@ const removeEmail = async () => {
 };
 
 // choose an email to associate with git
-const changeEmail = async (scope = '--local') => {
+const changeEmail = async (scope = '') => {
   const emails = db.get('emails').value();
 
   if (emails.length === 0) {
     console.log('no emails added');
     await addEmail();
-    return;
+    await changeEmail();
   }
 
   const response = await prompt({
@@ -63,21 +62,27 @@ const changeEmail = async (scope = '--local') => {
   const email = response.selectedEmail;
 
   const { spawn } = require('child_process');
-  const gitEmail = spawn('git', ['config', scope, 'user.email', email]);
 
-  gitEmail.stdout.on('data', (data) => {
+  scope === '--global' ? '--global' : '';
+
+  const gitEmail =
+    scope === '--global'
+      ? spawn('git', ['config', '--global', 'user.email', email])
+      : spawn('git', ['config', 'user.email', email]);
+
+  await gitEmail.stdout.on('data', data => {
     console.log(`${data}`);
   });
 
-  gitEmail.stderr.on('data', (data) => {
+  await gitEmail.stderr.on('data', data => {
     console.log(`${data}`);
   });
 
-  gitEmail.on('close', (code) => {
+  await gitEmail.on('close', code => {
     process.exit(code);
   });
 
-  console.log(`changed email to ${email} ✉️`);
+  // console.log(`changed email to ${email} ✉️`);
 };
 
 module.exports = {
