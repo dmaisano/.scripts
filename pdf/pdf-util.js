@@ -14,7 +14,6 @@ const promptUser = async fileName => {
 
   switch (result.type) {
     case 'docx to pdf':
-      console.log('owo');
       return;
       convertHelper(fileName, 'exportPDF')
         .then(arrayBuffer => {
